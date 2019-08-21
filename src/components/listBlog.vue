@@ -23,11 +23,11 @@
             <!--索引-->
             <!-- <el-table-column type="index" :index="indexMethod"></el-table-column> -->
             <el-table-column prop="id" label="id" sortable></el-table-column>
-            <el-table-column prop="title" label="标题" ></el-table-column>
-            <el-table-column prop="link" label="链接" ></el-table-column>
-            <el-table-column prop="date" label="日期" :formatter="dateFormat" sortable></el-table-column>
-            <el-table-column prop="author" label="作者" ></el-table-column>
-            <el-table-column prop="tag" label="显隐" ></el-table-column>
+            <el-table-column prop="modelPath" label="模型文件" ></el-table-column>
+            <el-table-column prop="phptoPath" label="贴图文件" ></el-table-column>
+            <el-table-column prop="backPath" label="背景文件"  ></el-table-column>
+            <el-table-column prop="createTime" label="创建时间" ></el-table-column>
+            <el-table-column prop="params" label="参数" ></el-table-column>
             <el-table-column label="编辑">
                 <template slot-scope="scope">
                     <router-link to="/updateBlog">
@@ -64,10 +64,23 @@ export default {
   methods: {
     listAllBlog() {
       // 由于已经导入了 Vue-resource这个包，所以 ，可以直接通过  this.$http 来发起数据请求
-      this.$http.get("getAllBlogs").then(result => {
-        // 注意： 通过 $http 获取到的数据，都在 result.body 中放着
-        var result = result.body;
-        if (result.code === 200) {
+      // this.$http.get("getAllBlogs").then(result => {
+      //   // 注意： 通过 $http 获取到的数据，都在 result.body 中放着
+      //   var result = result.body;
+      //   if (result.code === 200) {
+      //     // 成功了
+      //     this.list = result.data;
+      //     console.log(result.data);
+      //   } else {
+      //     // 失败了
+      //     alert("获取数据失败！");
+      //   }
+       
+      // });
+     this.axios.get("api/uploads/getAll")
+        .then(result=>{
+          console.info(result);
+                  if (result.status === 200) {
           // 成功了
           this.list = result.data;
           console.log(result.data);
@@ -75,7 +88,8 @@ export default {
           // 失败了
           alert("获取数据失败！");
         }
-      });
+
+        });
     },
     //时间格式化
     dateFormat: function(row, column) {
@@ -86,8 +100,8 @@ export default {
       return this.$moment(date).format("YYYY-MM-DD HH:mm:ss");
     },
     deleteBlog(index, row) {
-      this.$http.delete("deleteBlogById/" + row.id).then(result => {
-        if (result.body.code === 200) {
+      this.axios.delete("api/uploads/delete/" + row.id).then(result => {
+        if (result.status === 200) {
           // 删除成功
           this.listAllBlog();
         } else {
