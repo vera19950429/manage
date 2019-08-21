@@ -110,9 +110,8 @@ export default {
       });
     },
     search() {
-      this.$http.get("getBlogById/" + this.input).then(result => {
-        var result = result.body;
-        if (result.code === 200) {
+      this.axios.get("api/uploads/search/" + this.input).then(result => {
+        if (result.status === 200) {
           this.list = [];
           this.list.push(result.data);
         } else {

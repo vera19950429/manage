@@ -1,60 +1,133 @@
 <template>
-    <div>
-        <el-form ref="form" label-width="80px">
-            <el-form-item label="标题">
-                <el-input v-model="title1"></el-input>
-            </el-form-item>
-            <el-form-item label="链接">
-                <el-input v-model="link1"></el-input>
-            </el-form-item>
-            <el-form-item label="作者">
-                <el-input v-model="author1"></el-input>
-            </el-form-item>
-            <el-form-item label="显隐">
-                <el-select v-model="tag1" placeholder="请选择">
-                <el-option label="显示" value="1"></el-option>
-                <el-option label="隐藏" value="0"></el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item>
-                <el-button type="primary" @click="addBlog">立即添加</el-button>
-            </el-form-item>
-        </el-form>
-    </div>
+  <div>
+    <el-form
+      ref="form"
+      label-width="80px"
+    >
+      <el-form-item label="标题">
+        <el-input v-model="id"></el-input>
+        <el-button @click="newId()">新建</el-button>
+      </el-form-item>
+      <el-form-item label="上传贴图文件">
+        <el-upload
+          class="upload-demo"
+          ref="uploadphoto"
+          name="file"
+          :action="photoPathUrl()"
+          :file-list="fileList"
+          :auto-upload="false"
+        >
+          <el-button
+            slot="trigger"
+            size="small"
+            type="primary"
+          >选取文件</el-button>
+          <el-button
+            style="margin-left: 10px;"
+            size="small"
+            type="success"
+            @click="submitUploadphoto"
+          >上传到服务器</el-button>
+          <div
+            slot="tip"
+            class="el-upload__tip"
+          >只能上传jpg/png文件，且不超过500kb</div>
+        </el-upload>
+      </el-form-item>
+      <el-form-item label="上传背景文件">
+        <el-upload
+          class="upload-demo"
+          ref="uploadback"
+          name="file"
+          :action="backPathUrl()"
+          :file-list="fileList"
+          :auto-upload="false"
+        >
+          <el-button
+            slot="trigger"
+            size="small"
+            type="primary"
+          >选取文件</el-button>
+          <el-button
+            style="margin-left: 10px;"
+            size="small"
+            type="success"
+            @click="submitUploadback"
+          >上传到服务器</el-button>
+          <div
+            slot="tip"
+            class="el-upload__tip"
+          >只能上传jpg/png文件，且不超过500kb</div>
+        </el-upload>
+      </el-form-item>
+      <el-form-item label="上传模型文件">
+        <el-upload
+          class="upload-demo"
+          ref="uploadmodel"
+          name="file"
+          :action="modelPathUrl()"
+          :file-list="fileList"
+          :auto-upload="false"
+        >
+          <el-button
+            slot="trigger"
+            size="small"
+            type="primary"
+          >选取文件</el-button>
+          <el-button
+            style="margin-left: 10px;"
+            size="small"
+            type="success"
+            @click="submitUploadmodel"
+          >上传到服务器</el-button>
+          <div
+            slot="tip"
+            class="el-upload__tip"
+          >只能上传jpg/png文件，且不超过500kb</div>
+        </el-upload>
+      </el-form-item>
+
+    </el-form>
+  </div>
 </template>
 <script>
 export default {
   data() {
     return {
-      title1: "",
-      link1: "",
-      author1: "",
-      tag1: ""
+      id: "",
+      modelPath: "",
+      photoPath: "",
+      backPath: "",
+      createTime: "",
+      params: ""
     };
   },
   methods: {
-    addBlog() {
-      this.$http
-        .post("insertBlog", {
-          title: this.title1,
-          link: this.link1,
-          author: this.author1,
-          tag: this.tag1
-        })
+    newId() {
+      this.axios.post("api/uploads/new/" + this.id)
         .then(result => {
-          var result = result.body;
-          if (result.code === 200) {
-            alert("添加成功！");
-            this.title1 = "";
-            this.link1 = "";
-            this.author1 = "";
-            this.tag1 = "";
-          } else {
-            // 失败了
-            alert("添加失败！");
-          }
-        });
-    }
+          alert("创建成功");
+        })
+    },
+    modelPathUrl() {
+      return "api/uploads/" + this.id + "/model_path";
+    },
+    photoPathUrl() {
+      return "api/uploads/" + this.id + "/photo_path";
+    },
+    backPathUrl() {
+      return "api/uploads/" + this.id + "/back_path";
+    },
+    submitUploadphoto() {
+      this.$refs.uploadphoto.submit();
+    },
+    submitUploadback() {
+      this.$refs.uploadback.submit();
+    },
+    submitUploadmodel() {
+      this.$refs.uploadmodel.submit();
+    },
+
   }
 };
 </script>
